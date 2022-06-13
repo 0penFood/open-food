@@ -1,16 +1,60 @@
 // prisma2/schema.prisma
 generator client {
-  provider = "prisma-client-js"
-  output   = "../node_modules/@internal/prisma/client"
+    provider = "prisma-client-js"
+    output   = "../node_modules/@internal/prisma/client"
 }
 
 datasource db {
-  provider          = "mongodb"
-  url               = env("NODATABASE_URL")
+    provider          = "mongodb"
+    url               = env("NODATABASE_URL")
 }
 
-model User {
-  id    String  @id @default(auto()) @map("_id") @db.ObjectId
-  email String  @unique
-  name  String?
+model Restaurants {
+    id              String      @id             @default(auto())    @map("_id")     @db.ObjectId
+    createdAt       Date        @default(now())
+    updatedAt       Date        @updatedAt
+
+    type            String
+    menus           Menus[]
+}
+
+model Menus{
+    id              String      @id             @default(auto())    @map("_id")     @db.ObjectId
+    createdAt       Date        @default(now())
+    updatedAt       Date        @updatedAt
+
+    name            String
+    detailsMenu     String?
+    priceMenu       Float
+    timePreparedDef Int
+    articlesMenu    Articles[]
+
+    provider        Restaurants @relation(fields: [providerId], references: [id])
+    providerId      String      @db.ObjectId
+}
+
+model Articles{
+    id              String      @id             @default(auto())    @map("_id")     @db.ObjectId
+    createdAt       Date        @default(now())
+    updatedAt       Date        @updatedAt
+
+    name            String
+    timePreparedDef Int
+    quantity        Int
+    pathPicture     String
+    price           Float
+
+    container       Menus      @relation(fields: [containerId], references: [id])
+    containerrId    String     @db.ObjectId
+}
+
+model Rankings{
+    id              String      @id             @default(auto())    @map("_id")     @db.ObjectId
+    createdAt       Date        @default(now())
+    updatedAt       Date        @updatedAt
+
+    userId          Int
+    userNotedID     String
+    stars           Int
+    commentary      String
 }
