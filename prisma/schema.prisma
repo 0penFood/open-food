@@ -12,27 +12,28 @@ datasource db {
 
 model Users{
     id              Int         @id                     @default(autoincrement())
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
+
+    name            String
+    email           String      @unique
+    password        String
+    fidelityPts     Float       @default(0)
+    accountType     Int         @default(1)
+
+    address         String?
+    phone           String?     @unique
+    coordonate      String?
+    area            String?
+    idSociete       String?     @unique
+}
+
+model userHasRestaurant{
+    id              Int         @id                     @default(autoincrement())
     createdAT       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
 
-    firstName       String
-    lastName        String
-    email           String      @unique
-    password        String
-    fidelity_pts    Float
-
-    address         String?
-    phone           String?
-    coordonate      String?
-    area            String?
-    id_societe      String?
-    rankings        Ranking[]
-}
-
-model Ranking{
-    id              Int         @id @default(autoincrement())
-    stars           Float
-    commentary      String
-    users           Users        @relation(fields:[fk_user], references:[id])
+    users           Users       @relation(fields:[fk_user], references:[id])
     fk_user         Int
+    idRestaurant    String
 }
