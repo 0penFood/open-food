@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  postgres:
+    restart: always
+    image: postgres:13
+    env_file:
+      - ../.env
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: $${POSTGRES_USER}
+      POSTGRES_PASSWORD: $${POSTGRES_PWD}
+      POSTGRES_DB: open_food_sql
+    networks:
+      - open-food
+    volumes:
+      - /db/postgres:/var/lib/postgresql/data
+
+  mongodb_migrate:
+    image: mongo:4
+    restart: always
+    env_file:
+      - ./../.env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: $${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: $${MONGO_PWD}
+      MONGO_INITDB_DATABASE: open_food_nosql
+    ports:
+      - '27017:27017'
+    networks:
+      - open-food
+    volumes:
+      - /db/mongodb:/data/db
+
+  # Replica Set (required for Prisma Client)
+  mongo:
+    build: ./mongodb_replica
+    env_file:
+      - ../.env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: $${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: $${MONGO_PWD}
+      MONGO_REPLICA_HOST: host.docker.internal
+      MONGO_REPLICA_PORT: 27018
+    ports:
+      - '27018:27018'
+    networks:
+      - open-food
+    volumes:
+      - /db/mongodb_replica:/data/db
+
+networks:
+  open-food:

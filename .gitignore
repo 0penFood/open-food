@@ -35,5 +35,4 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # Basic Security Excludes
-!/docker-compose.yml
 !/.env
