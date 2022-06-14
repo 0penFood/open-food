@@ -54,7 +54,7 @@ model Rankings{
     updatedAt       Date        @updatedAt
 
     userId          Int
-    userNotedID     String
+    idSociety     String
     stars           Int
     commentary      String
 }
