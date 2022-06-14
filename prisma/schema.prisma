@@ -15,25 +15,61 @@ model Users{
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
 
-    name            String
+    firstName       String
+    lastName        String
     email           String      @unique
     password        String
     fidelityPts     Float       @default(0)
     accountType     Int         @default(1)
-
-    address         String?
     phone           String?     @unique
     coordonate      String?
-    area            String?
-    idSociete       String?     @unique
+
+    ssoGoogle      Boolean     @default(false)
+    ssoFacebook    Boolean     @default(false)
+    ssoGitHub      Boolean     @default(false)
+    lastLogin      DateTime?
+
+    userSociety    UserHasSociete[]
+    adress         UserHasAdress[]
+    billing        UserHasBilling[]
 }
 
-model userHasRestaurant{
+model UserHasSociete{
     id              Int         @id                     @default(autoincrement())
-    createdAT       DateTime    @default(now())
-    updatedAt       DateTime    @updatedAt
+
+    users           Users       @relation(fields: [fk_user], references: [id])
+    fk_user         Int
+    society         Society     @relation(fields: [fk_society], references: [id])
+    fk_society      Int
+}
+
+model UserHasAdress{
+    id              Int         @id                     @default(autoincrement())
+
+
+    users           Users       @relation(fields: [fk_user], references: [id])
+    fk_user         Int
+    address         String
+}
+
+model UserHasBilling{
+    id              Int         @id                     @default(autoincrement())
 
     users           Users       @relation(fields:[fk_user], references:[id])
     fk_user         Int
-    idRestaurant    String
+    Billing         String
+}
+
+model Society{
+    id              Int         @id                     @default(autoincrement())
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
+
+    societeyAuth    String
+    area            String?
+    societyName     String
+    sepa            String
+    idRestaurant    String?
+
+    societyUsers    UserHasSociete[]
 }
