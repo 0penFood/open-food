@@ -12,27 +12,64 @@ datasource db {
 
 model Users{
     id              Int         @id                     @default(autoincrement())
-    createdAT       DateTime    @default(now())
+    createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
 
     firstName       String
     lastName        String
     email           String      @unique
     password        String
-    fidelity_pts    Float
-
-    address         String?
-    phone           String?
+    fidelityPts     Float       @default(0)
+    accountType     Int         @default(1)
+    phone           String?     @unique
     coordonate      String?
-    area            String?
-    id_societe      String?
-    rankings        Ranking[]
+
+    ssoGoogle      Boolean     @default(false)
+    ssoFacebook    Boolean     @default(false)
+    ssoGitHub      Boolean     @default(false)
+    lastLogin      DateTime?
+
+    userSociety    UserHasSociete[]
+    adress         UserHasAdress[]
+    billing        UserHasBilling[]
 }
 
-model Ranking{
-    id              Int         @id @default(autoincrement())
-    stars           Float
-    commentary      String
-    users           Users        @relation(fields:[fk_user], references:[id])
+model UserHasSociete{
+    id              Int         @id                     @default(autoincrement())
+
+    users           Users       @relation(fields: [fk_user], references: [id])
     fk_user         Int
+    society         Society     @relation(fields: [fk_society], references: [id])
+    fk_society      Int
+}
+
+model UserHasAdress{
+    id              Int         @id                     @default(autoincrement())
+
+
+    users           Users       @relation(fields: [fk_user], references: [id])
+    fk_user         Int
+    address         String
+}
+
+model UserHasBilling{
+    id              Int         @id                     @default(autoincrement())
+
+    users           Users       @relation(fields:[fk_user], references:[id])
+    fk_user         Int
+    Billing         String
+}
+
+model Society{
+    id              Int         @id                     @default(autoincrement())
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
+
+    societeyAuth    String
+    area            String?
+    societyName     String
+    sepa            String
+    idRestaurant    String?
+
+    societyUsers    UserHasSociete[]
 }
