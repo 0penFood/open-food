@@ -11,8 +11,8 @@ datasource db {
 
 model Restaurants {
     id              String      @id             @default(auto())    @map("_id")     @db.ObjectId
-    createdAt       Date        @default(now())
-    updatedAt       Date        @updatedAt
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
 
     type            String
     menus           Menus[]
@@ -21,8 +21,8 @@ model Restaurants {
 
 model Menus{
     id              String      @id             @default(auto())    @map("_id")     @db.ObjectId
-    createdAt       Date        @default(now())
-    updatedAt       Date        @updatedAt
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
 
     name            String
     details         String?
@@ -37,8 +37,8 @@ model Menus{
 
 model Articles{
     id              String      @id             @default(auto())    @map("_id")     @db.ObjectId
-    createdAt       Date        @default(now())
-    updatedAt       Date        @updatedAt
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
 
     name            String
     timePreparedDef Int
@@ -46,15 +46,15 @@ model Articles{
     pathPicture     String
     price           Float
 
-    container       Menus      @relation(fields: [containerId], references: [id])
-    containerId    String     @db.ObjectId
+    container       Menus       @relation(fields: [containerId], references: [id])
+    containerId    String       @db.ObjectId
 }
 
 
 model Rankings{
     id              String      @id             @default(auto())    @map("_id")     @db.ObjectId
-    createdAt       Date        @default(now())
-    updatedAt       Date        @updatedAt
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
 
     userId          Int
     idSociety       String
@@ -65,8 +65,8 @@ model Rankings{
 
 model PatnershipSocietys{
     id              String      @id             @default(auto())    @map("_id")     @db.ObjectId
-    createdAt       Date        @default(now())
-    updatedAt       Date        @updatedAt
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
 
     sponsorSociety  String
     partnerSociery  String
@@ -76,8 +76,8 @@ model PatnershipSocietys{
 
 model PatnershipUsers{
     id              String      @id             @default(auto())    @map("_id")     @db.ObjectId
-    createdAt       Date        @default(now())
-    updatedAt       Date        @updatedAt
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
 
     sponsorUser     Int
     partnerUser     Int
@@ -87,12 +87,13 @@ model PatnershipUsers{
 
 model Commandes{
     id              String      @id             @default(auto())    @map("_id")     @db.ObjectId
-    createdAt       Date        @default(now())
-    updatedAt       Date        @updatedAt
+    createdAt       DateTime        @default(now())
+    updatedAt       DateTime        @updatedAt
 
     idUser          Int
     idRestau        Int
     idLivreur       Int
+    timeDelivery    DateTime
     state           Int
     price           Float
     deliveryAddress String
@@ -106,6 +107,6 @@ model ArticlesCommandes{
     name            String
     quantity        Int
 
-    commandes       Commandes      @relation(fields: [commandesID], references: [id])
-    commandesID     String     @db.ObjectId
+    commandes       Commandes   @relation(fields: [commandesID], references: [id])
+    commandesID     String      @db.ObjectId
 }
