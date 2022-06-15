@@ -18,7 +18,7 @@ model Users{
     firstName       String
     lastName        String
     email           String      @unique
-    password        String
+    password        String?
     fidelityPts     Float       @default(0)
     accountType     Int         @default(1)
     phone           String?     @unique
