@@ -2,15 +2,12 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaClient } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 
 const prisma = new PrismaClient();
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
-
   async create(createUserDto: CreateUserDto) {
     prisma.$connect();
     try
