@@ -8,7 +8,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
   }));
-  await Logger.infoLog('server', 'Server started');
+  await Logger.infoLog('server', 'Server started')
   await app.listen(3333);
 }
 bootstrap();
