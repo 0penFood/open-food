@@ -1,16 +1,15 @@
-import { IsBoolean, IsInt, IsNotEmpty, IsOptional } from "class-validator";
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { Type } from "class-transformer";
 
-export class CreateUserSocietyDto {
+export class CreateUserAddressDto {
   @IsNotEmpty()
   @Type(() => Number)
   @IsInt()
   fk_user: number;
 
   @IsNotEmpty()
-  @Type(() => Number)
-  @IsInt()
-  fk_society: number;
+  @IsString()
+  address: string;
 
   @IsOptional()
   @IsBoolean()

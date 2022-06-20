@@ -54,4 +54,8 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()
   @IsBoolean()
   ssoGitHub: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isValid: boolean;
 }
