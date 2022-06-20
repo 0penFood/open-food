@@ -1,20 +1,20 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { PrismaClient } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { ForbiddenException, Injectable }   from "@nestjs/common";
+import { CreateSocietyDto }                 from './dto/create-society.dto';
+import { UpdateSocietyDto }                 from './dto/update-society.dto';
+import { PrismaClient }                     from "@prisma/client";
+import { PrismaClientKnownRequestError }    from "@prisma/client/runtime";
 
 const prisma = new PrismaClient();
 
 @Injectable()
-export class UsersService {
-  async create(createUserDto: CreateUserDto) {
+export class SocietiesService {
+  async create(createSocietyDto: CreateSocietyDto) {
     prisma.$connect();
     try
     {
-      await prisma.users.create({data: createUserDto})
+      await prisma.societies.create({data: createSocietyDto});
       prisma.$disconnect();
-      return 'User is create';
+      return 'This action adds a new society';
     }
     catch (e)
     {
@@ -33,41 +33,32 @@ export class UsersService {
 
   async findAll() {
     prisma.$connect();
-    const allUsers = await prisma.users.findMany();
+    const allSocieties = await prisma.societies.findMany();
     prisma.$disconnect();
-    return `This action returns all users` + allUsers;
+    return `This action returns all users` + allSocieties;
   }
 
-  async findOneById(id: number) {
+  async findOne(id: number) {
     prisma.$connect();
-    const User = await prisma.users.findUnique({where: {
+    const User = await prisma.societies.findUnique({where: {
         id: id,
       },});
     prisma.$disconnect();
-    return `This action returns a #${id} user`;
+    return `This action returns a #${id} society`;
   }
 
-  async findOneByEmail(email: string) {
-    prisma.$connect();
-    const User = await prisma.users.findUnique({where: {
-        email: email,
-      },});
-    prisma.$disconnect();
-    return `This action returns a #${email} user`;
-  }
-
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateSocietyDto: UpdateSocietyDto) {
     prisma.$connect();
     try
     {
-      const User = await prisma.users.update({
-        data: updateUserDto,
+      await prisma.societies.update({
+        data: updateSocietyDto,
         where: {
           id: id,
         },
       });
       prisma.$disconnect();
-      return 'This action updates a #${id} user';
+      return `This action updates a #${id} society`;
     }
     catch (e)
     {
@@ -87,11 +78,11 @@ export class UsersService {
     prisma.$connect();
     try
     {
-      const allUsers = await prisma.users.delete({
+      await prisma.societies.delete({
         where: {id: id}
       });
       prisma.$disconnect();
-      return 'This action removes a #${id} user';
+      return 'This action removes a #${id} society';
     }
     catch (e)
     {
