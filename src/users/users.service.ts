@@ -20,6 +20,9 @@ export class UsersService {
       return {
         id: getCreatedUser.id,
         email: getCreatedUser.email,
+        where: {
+          isValid: true,
+        }
       };
     }
     catch (e)
@@ -49,6 +52,9 @@ export class UsersService {
       name: user.firstName + '_' + user.lastName,
       email: user.email,
       phone: user.phone,
+      where: {
+        isValid: true,
+      }
     }
     })
     await Logger.infoLog('api', 'All users have been read');
@@ -67,6 +73,10 @@ export class UsersService {
         email: User.email,
         name: User.firstName + '_' + User.lastName,
         phone: User.phone,
+        isValid: User.isValid,
+        where: {
+          isValid: true,
+        }
     };
   }
 
@@ -82,6 +92,9 @@ export class UsersService {
       email: User.email,
       name: User.firstName + '_' + User.lastName,
       phone: User.phone,
+      where: {
+        isValid: true,
+      }
     };
   }
 
@@ -103,6 +116,7 @@ export class UsersService {
         email: getUpdatedUser.email,
         name: getUpdatedUser.name,
         phone: getUpdatedUser.phone,
+        idValid: getUpdatedUser.isValid,
       };
     }
     catch (e)
