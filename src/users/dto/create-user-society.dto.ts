@@ -1,4 +1,4 @@
-import { IsBoolean, IsInt, IsNotEmpty } from "class-validator";
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional } from "class-validator";
 import { Type } from "class-transformer";
 
 export class CreateUserSocietyDto {
@@ -12,6 +12,7 @@ export class CreateUserSocietyDto {
   @IsInt()
   fk_society: number;
 
+  @IsOptional()
   @IsBoolean()
   @IsNotEmpty()
   isValid: boolean;

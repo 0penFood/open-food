@@ -4,6 +4,8 @@ import {UpdateUserDto} from './dto/update-user.dto';
 import {PrismaClient} from '@prisma/client';
 import {PrismaClientKnownRequestError} from '@prisma/client/runtime';
 import { Logger } from '../../helpers/logger'
+import { CreateUserSocietyDto } from "./dto/create-user-society.dto";
+import { UpdateUserSocietiesDto } from "./dto/update-user-societies.dto";
 
 const prisma = new PrismaClient();
 
@@ -42,6 +44,44 @@ export class UsersService {
     }
   }
 
+  async createLinkSociety(createUserSocietyDto: CreateUserSocietyDto) {
+    prisma.$connect();
+    try
+    {
+      if(createUserSocietyDto.fk_society != 0 && createUserSocietyDto.fk_user != 0)
+      {
+        await prisma.userHasSociety.create({data: createUserSocietyDto})
+        prisma.$disconnect();
+        await Logger.infoLog('api', 'User with id ' + createUserSocietyDto.fk_user + ' is link to Society with id ' + createUserSocietyDto.fk_society + ' created');
+        return {
+          message : 'User link created'
+        };
+      }
+      else {
+        prisma.$disconnect();
+        await Logger.infoLog('api', ' ID User Or Society not found');
+        return {
+          message : 'Error: ID User Or Society not found'
+        };
+      }
+    }
+    catch (e)
+    {
+      if(e instanceof PrismaClientKnownRequestError)
+      {
+        if(e.code === 'P2003')
+        {
+          prisma.$disconnect();
+          await Logger.errorLog('api', 'r: user/createUserHasSociety -> Error: ID Society or ID User provided not exists');
+          throw new ForbiddenException('Error : ID Society or ID User not exists');
+        }
+      }
+      prisma.$disconnect();
+      await Logger.errorLog('api', 'Error : '+e.message);
+      throw e;
+    }
+  }
+
   async findAll() {
     prisma.$connect();
     const allUsers = await prisma.users.findMany();
@@ -58,6 +98,52 @@ export class UsersService {
     }
     })
     await Logger.infoLog('api', 'All users have been read');
+    return users;
+  }
+
+  async findAllLinkSocietiesUser(id: number) {
+    prisma.$connect();
+
+    const allUserSociety = await prisma.userHasSociety.findMany({where: {
+      fk_user : id
+      }});
+
+    prisma.$disconnect();
+    let societies = {};
+
+    allUserSociety.forEach(userSociety => {
+      societies[userSociety.id] = {
+        user_id: userSociety.fk_user,
+        society_id: userSociety.fk_society,
+        where: {
+          isValid: true,
+        }
+      }
+    })
+    await Logger.infoLog('api', 'All societies link to user with id ' + id + ' have been read');
+    return societies;
+  }
+
+  async findAllLinkSocietiesSociety(id: number) {
+    prisma.$connect();
+
+    const allUserSociety = await prisma.userHasSociety.findMany({where: {
+      fk_society : id
+      }});
+
+    prisma.$disconnect();
+    let users = {};
+
+    allUserSociety.forEach(userSociety => {
+      users[userSociety.id] = {
+        user_id: userSociety.fk_user,
+        society_id: userSociety.fk_society,
+        where: {
+          isValid: true,
+        }
+      }
+    })
+    await Logger.infoLog('api', 'All users link to society with id ' + id + ' have been read');
     return users;
   }
 
@@ -135,6 +221,39 @@ export class UsersService {
     }
   }
 
+  async updateLinkSociety(id: number, updateUserSocietiesDto: UpdateUserSocietiesDto) {
+    prisma.$connect();
+    try
+    {
+      await prisma.userHasSociety.update({
+        data: updateUserSocietiesDto,
+        where: { id: id }
+      });
+
+      prisma.$disconnect();
+      await Logger.infoLog('api', 'User with id '+id+' updated');
+
+      await Logger.infoLog('api', 'LinkSociety with id ' + id + ' updated' );
+      return {
+        message : 'LinkSociety with id ' + id + ' updated'
+      };
+    }
+    catch (e)
+    {
+      prisma.$disconnect();
+      if(e instanceof PrismaClientKnownRequestError)
+      {
+        if(e.code === 'P2003')
+        {
+          await Logger.errorLog('api', 'Attempt to update a LinkSociety with an id not existing');
+          throw new ForbiddenException('ID Society or ID User not existing');
+        }
+      }
+      await Logger.errorLog('api', 'Error : '+e.message);
+      throw e;
+    }
+  }
+
   async delete(id: number) {
     prisma.$connect();
     try
@@ -159,6 +278,27 @@ export class UsersService {
           throw new ForbiddenException('Error: Foreign key constraints failed delete');
         }
       }
+      prisma.$disconnect();
+      await Logger.errorLog('api', 'Error : '+e.message);
+      throw e;
+    }
+  }
+
+  async deleteLinkSociety(id: number) {
+    prisma.$connect();
+    try
+    {
+      await prisma.userHasSociety.delete({
+        where: {
+          id: id
+        }
+      });
+      prisma.$disconnect();
+      await Logger.infoLog('api', 'LinkSociety with id ' + id + ' deleted');
+      return 'This action removes a ' + String(id) + ' LinkSociety';
+    }
+    catch (e)
+    {
       prisma.$disconnect();
       await Logger.errorLog('api', 'Error : '+e.message);
       throw e;

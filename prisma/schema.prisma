@@ -28,7 +28,6 @@ model Users{
     ssoFacebook    Boolean     @default(false)
     ssoGitHub      Boolean     @default(false)
     lastLogin      DateTime?
-    isValid        Boolean     @default(true)
 
 
     isValid         Boolean     @default(true)
