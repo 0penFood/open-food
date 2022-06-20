@@ -4,7 +4,6 @@ import {
   IsEmail,
   IsInt,
   IsNotEmpty,
-  IsNumberString,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -51,8 +50,5 @@ export class CreateUserDto {
   @IsOptional()
   @IsBoolean()
   ssoGitHub: boolean;
-}
-function ParseNumber() {
-    throw new Error('Function not implemented.');
 }
 
