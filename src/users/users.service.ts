@@ -6,11 +6,17 @@ import {PrismaClientKnownRequestError} from '@prisma/client/runtime';
 import { Logger } from '../../helpers/logger'
 import { CreateUserSocietyDto } from "./dto/create-user-society.dto";
 import { UpdateUserSocietiesDto } from "./dto/update-user-societies.dto";
+import { CreateUserBillingDto } from "./dto/create-user-billing.dto";
+import { CreateUserAddressDto } from "./dto/create-user-address.dto";
+import { UpdateUserAddressDto } from "./dto/update-user-address.dto";
+import { UpdateUserBillingDto } from "./dto/update-user-billing.dto";
 
 const prisma = new PrismaClient();
 
 @Injectable()
 export class UsersService {
+
+  // Create Function Part
   async create(createUserDto: CreateUserDto) {
     prisma.$connect();
     try
@@ -82,6 +88,84 @@ export class UsersService {
     }
   }
 
+  async createBilling(createUserBillingDto: CreateUserBillingDto) {
+    prisma.$connect();
+    try
+    {
+      if(createUserBillingDto.fk_user != 0)
+      {
+        await prisma.userHasBilling.create({data: createUserBillingDto})
+        prisma.$disconnect();
+        await Logger.infoLog('api', 'Billing link to User with id ' + createUserBillingDto.fk_user + ' is created');
+        return {
+          message : 'Billing link created'
+        };
+      }
+      else {
+        prisma.$disconnect();
+        await Logger.infoLog('api', ' ID User not found');
+        return {
+          message : 'Error: ID User not found'
+        };
+      }
+    }
+    catch (e)
+    {
+      if(e instanceof PrismaClientKnownRequestError)
+      {
+        if(e.code === 'P2003')
+        {
+          prisma.$disconnect();
+          await Logger.errorLog('api', 'r: user/createUserHasBilling -> Error: ID User provided not exists');
+          throw new ForbiddenException('Error : ID User not exists');
+        }
+      }
+      prisma.$disconnect();
+      await Logger.errorLog('api', 'Error : '+e.message);
+      throw e;
+    }
+  }
+
+  async createAddress(createUserAddressDto: CreateUserAddressDto) {
+    prisma.$connect();
+    try
+    {
+      if(createUserAddressDto.fk_user != 0)
+      {
+        await prisma.userHasAdress.create({data: createUserAddressDto})
+        prisma.$disconnect();
+        await Logger.infoLog('api', 'Address link to User with id ' + createUserAddressDto.fk_user + ' is created');
+        return {
+          message : 'Address link created'
+        };
+      }
+      else {
+        prisma.$disconnect();
+        await Logger.infoLog('api', ' ID User not found');
+        return {
+          message : 'Error: ID User not found'
+        };
+      }
+    }
+    catch (e)
+    {
+      if(e instanceof PrismaClientKnownRequestError)
+      {
+        if(e.code === 'P2003')
+        {
+          prisma.$disconnect();
+          await Logger.errorLog('api', 'r: user/createUserHasAddress -> Error: ID User provided not exists');
+          throw new ForbiddenException('Error : ID User not exists');
+        }
+      }
+      prisma.$disconnect();
+      await Logger.errorLog('api', 'Error : '+e.message);
+      throw e;
+    }
+  }
+
+
+  // Find All Function Part
   async findAll() {
     prisma.$connect();
     const allUsers = await prisma.users.findMany();
@@ -99,6 +183,50 @@ export class UsersService {
     })
     await Logger.infoLog('api', 'All users have been read');
     return users;
+  }
+
+  async findAllAddress(id: number) {
+    prisma.$connect();
+    const allAddress = await prisma.userHasAdress.findMany({where: {
+      fk_user: id
+      }});
+    prisma.$disconnect();
+    let address = {};
+
+    allAddress.forEach(addresss => {
+      address[addresss.id] = {
+        id: addresss.id,
+        id_user: id,
+        address: addresss.address,
+        where: {
+          isValid: true,
+        }
+      }
+    })
+    await Logger.infoLog('api', 'All address link to User with id ' + id + ' have been read');
+    return address;
+  }
+
+  async findAllBilling(id: number) {
+    prisma.$connect();
+    const allBilling= await prisma.userHasBilling.findMany({where: {
+        fk_user: id
+      }});
+    prisma.$disconnect();
+    let billings = {};
+
+    allBilling.forEach(billing => {
+      billings[billing.id] = {
+        id: billing.id,
+        id_user: id,
+        billing: billing.billing,
+        where: {
+          isValid: true,
+        }
+      }
+    })
+    await Logger.infoLog('api', 'All billing link to User with id ' + id + ' have been read');
+    return billings;
   }
 
   async findAllLinkSocietiesUser(id: number) {
@@ -147,6 +275,8 @@ export class UsersService {
     return users;
   }
 
+
+  // Find Unique Function Part
   async findOneById(id: number) {
     prisma.$connect();
     const User = await prisma.users.findUnique({where: {
@@ -184,26 +314,38 @@ export class UsersService {
     };
   }
 
+
+  // Update Function Part
   async update(id: number, updateUserDto: UpdateUserDto) {
     prisma.$connect();
     try
     {
-      await prisma.users.update({
-        data: updateUserDto,
-        where: {
-          id: id,
-        },
-      });
-      const getUpdatedUser = await this.findOneById(id);
-      prisma.$disconnect();
+      if(id != null)
+      {
+        await prisma.users.update({
+          data: updateUserDto,
+          where: {
+            id: id,
+          },
+        });
+        const getUpdatedUser = await this.findOneById(id);
+        prisma.$disconnect();
         await Logger.infoLog('api', 'User with id '+id+' updated');
-      return {
-        id: getUpdatedUser.id,
-        email: getUpdatedUser.email,
-        name: getUpdatedUser.name,
-        phone: getUpdatedUser.phone,
-        idValid: getUpdatedUser.isValid,
-      };
+        return {
+          id: getUpdatedUser.id,
+          email: getUpdatedUser.email,
+          name: getUpdatedUser.name,
+          phone: getUpdatedUser.phone,
+          idValid: getUpdatedUser.isValid,
+        };
+      }
+      else
+      {
+        await Logger.infoLog('api', 'User with id ' + id + ' not Found');
+        return {
+          message : 'No ID found'
+        };
+      }
     }
     catch (e)
     {
@@ -231,8 +373,6 @@ export class UsersService {
       });
 
       prisma.$disconnect();
-      await Logger.infoLog('api', 'User with id '+id+' updated');
-
       await Logger.infoLog('api', 'LinkSociety with id ' + id + ' updated' );
       return {
         message : 'LinkSociety with id ' + id + ' updated'
@@ -254,6 +394,70 @@ export class UsersService {
     }
   }
 
+  async updateAddress(id: number, updateUserAddressDto: UpdateUserAddressDto) {
+    prisma.$connect();
+    try
+    {
+      await prisma.userHasAdress.update({
+        data: updateUserAddressDto,
+        where: { id: id }
+      });
+
+      prisma.$disconnect();
+      await Logger.infoLog('api', 'Address with id ' + id + ' updated' );
+      return {
+        message : 'Address with id ' + id + ' updated'
+      };
+    }
+    catch (e)
+    {
+      prisma.$disconnect();
+      if(e instanceof PrismaClientKnownRequestError)
+      {
+        if(e.code === 'P2003')
+        {
+          await Logger.errorLog('api', 'Attempt to update a Address with an id not existing');
+          throw new ForbiddenException('ID address not existing');
+        }
+      }
+      await Logger.errorLog('api', 'Error : '+e.message);
+      throw e;
+    }
+  }
+
+  async updateBilling(id: number, updateUserBillingDto: UpdateUserBillingDto) {
+    prisma.$connect();
+    try
+    {
+      await prisma.userHasBilling.update({
+        data: updateUserBillingDto,
+        where: { id: id }
+      });
+
+      prisma.$disconnect();
+      await Logger.infoLog('api', 'Billing with id ' + id + ' updated' );
+      return {
+        message : 'Billing with id ' + id + ' updated'
+      };
+    }
+    catch (e)
+    {
+      prisma.$disconnect();
+      if(e instanceof PrismaClientKnownRequestError)
+      {
+        if(e.code === 'P2003')
+        {
+          await Logger.errorLog('api', 'Attempt to update a Billing with an id not existing');
+          throw new ForbiddenException('ID Billing not existing');
+        }
+      }
+      await Logger.errorLog('api', 'Error : '+ e.message);
+      throw e;
+    }
+  }
+
+
+  // Delete Function Part
   async delete(id: number) {
     prisma.$connect();
     try
@@ -305,6 +509,49 @@ export class UsersService {
     }
   }
 
+  async deleteAddress(id: number) {
+    prisma.$connect();
+    try
+    {
+      await prisma.userHasAdress.delete({
+        where: {
+          id: id
+        }
+      });
+      prisma.$disconnect();
+      await Logger.infoLog('api', 'Address with id ' + id + ' deleted');
+      return 'This action removes a ' + String(id) + ' Address';
+    }
+    catch (e)
+    {
+      prisma.$disconnect();
+      await Logger.errorLog('api', 'Error : '+e.message);
+      throw e;
+    }
+  }
+
+  async deleteBilling(id: number) {
+    prisma.$connect();
+    try
+    {
+      await prisma.userHasBilling.delete({
+        where: {
+          id: id
+        }
+      });
+      prisma.$disconnect();
+      await Logger.infoLog('api', 'Billing with id ' + id + ' deleted');
+      return 'This action removes a ' + String(id) + ' Billing';
+    }
+    catch (e)
+    {
+      prisma.$disconnect();
+      await Logger.errorLog('api', 'Error : '+e.message);
+      throw e;
+    }
+  }
+
+  // Remove Function Part
   async remove(id: number) {
     prisma.$connect();
     try

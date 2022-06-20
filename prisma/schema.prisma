@@ -64,7 +64,7 @@ model UserHasBilling{
 
     users           Users       @relation(fields:[fk_user], references:[id])
     fk_user         Int
-    Billing         String
+    billing         String
 
 
     isValid         Boolean     @default(true)
