@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { SocietiesService } from './societies.service';
 import { CreateSocietyDto } from './dto/create-society.dto';
 import { UpdateSocietyDto } from './dto/update-society.dto';
-import { CreateSocietyUserDto } from "./dto/create-society-user.dto";
 
 @Controller('societies')
 export class SocietiesController {
@@ -31,11 +30,5 @@ export class SocietiesController {
   @Delete('delete/:id')
   remove(@Param('id') id: string) {
     return this.societiesService.remove(+id);
-  }
-
-
-  @Post('createSU')
-  createSU(@Body() createSocietyUserDto: CreateSocietyUserDto) {
-    return this.societiesService.createSU(createSocietyUserDto);
   }
 }

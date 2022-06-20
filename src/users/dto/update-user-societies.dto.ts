@@ -1,25 +1,23 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateSocietyDto } from './create-society.dto';
-import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { CreateUserSocietyDto } from './create-user-society.dto';
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional } from "class-validator";
 import { Type } from "class-transformer";
 
-export class UpdateSocietyUserDto extends PartialType(CreateSocietyDto) {
+export class UpdateUserSocietiesDto extends PartialType(CreateUserSocietyDto) {
+  @IsNotEmpty()
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  fk_user: number;
 
   @IsNotEmpty()
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  idUser: number;
-
-  @IsNotEmpty()
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  idSociety: number;
+  fk_society: number;
 
   @IsBoolean()
   @IsNotEmpty()
   @IsOptional()
   isValid: boolean;
-
 }

@@ -32,17 +32,17 @@ model Users{
 
     isValid         Boolean     @default(true)
 
-    userSociety    UserHasSociete[]
+    userSociety    UserHasSociety[]
     adress         UserHasAdress[]
     billing        UserHasBilling[]
 }
 
 model UserHasSociety{
-    id              Int         @id                     @default(autoincrement())
+    id              Int             @id                     @default(autoincrement())
 
-    users           Users       @relation(fields: [fk_user], references: [id])
+    users           Users           @relation(fields: [fk_user], references: [id])
     fk_user         Int
-    society         Society     @relation(fields: [fk_society], references: [id])
+    society         Societies       @relation(fields: [fk_society], references: [id])
     fk_society      Int
 
     isValid         Boolean     @default(true)
@@ -84,5 +84,5 @@ model Societies{
 
     isValid         Boolean     @default(true)
 
-    societyUsers    UserHasSociete[]
+    societyUsers    UserHasSociety[]
 }

@@ -1,17 +1,16 @@
 import { IsBoolean, IsInt, IsNotEmpty } from "class-validator";
 import { Type } from "class-transformer";
 
-export class CreateSocietyUserDto {
+export class CreateUserSocietyDto {
+  @IsNotEmpty()
+  @Type(() => Number)
+  @IsInt()
+  fk_user: number;
 
   @IsNotEmpty()
   @Type(() => Number)
   @IsInt()
-  idUser: number;
-
-  @IsNotEmpty()
-  @Type(() => Number)
-  @IsInt()
-  idSociety: number;
+  fk_society: number;
 
   @IsBoolean()
   @IsNotEmpty()
