@@ -20,28 +20,33 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Get('read')
+  @Get('readAll')
   findAll() {
     return this.usersService.findAll();
   }
 
-  @Get('read/i/:id')
+  @Get('readByID/:id')
   findOneById(@Param('id') id: string) {
     return this.usersService.findOneById(+id);
   }
 
-  @Get('read/e/:email')
+  @Get('readByEmail/:email')
   findOneByEmail(@Param('email') email: string) {
     return this.usersService.findOneByEmail(email);
   }
 
-  @Patch('update/i/:id')
+  @Patch('update/:id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
   }
 
-  @Delete('delete/i/:id')
+  @Patch('remove/:id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
+  }
+
+  @Delete('delete/:id')
+  delete(@Param('id') id: string) {
+    return this.usersService.delete(+id);
   }
 }

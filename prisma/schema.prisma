@@ -28,6 +28,7 @@ model Users{
     ssoFacebook    Boolean     @default(false)
     ssoGitHub      Boolean     @default(false)
     lastLogin      DateTime?
+    isValid        Boolean     @default(true)
 
     userSociety    UserHasSociete[]
     adress         UserHasAdress[]
