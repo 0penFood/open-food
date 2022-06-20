@@ -30,18 +30,23 @@ model Users{
     lastLogin      DateTime?
     isValid        Boolean     @default(true)
 
-    userSociety    UserHasSociete[]
+
+    isValid         Boolean     @default(true)
+
+    userSociety    UserHasSociety[]
     adress         UserHasAdress[]
     billing        UserHasBilling[]
 }
 
-model UserHasSociete{
-    id              Int         @id                     @default(autoincrement())
+model UserHasSociety{
+    id              Int             @id                     @default(autoincrement())
 
-    users           Users       @relation(fields: [fk_user], references: [id])
+    users           Users           @relation(fields: [fk_user], references: [id])
     fk_user         Int
-    society         Society     @relation(fields: [fk_society], references: [id])
+    society         Societies       @relation(fields: [fk_society], references: [id])
     fk_society      Int
+
+    isValid         Boolean     @default(true)
 }
 
 model UserHasAdress{
@@ -51,6 +56,8 @@ model UserHasAdress{
     users           Users       @relation(fields: [fk_user], references: [id])
     fk_user         Int
     address         String
+
+    isValid         Boolean     @default(true)
 }
 
 model UserHasBilling{
@@ -59,18 +66,24 @@ model UserHasBilling{
     users           Users       @relation(fields:[fk_user], references:[id])
     fk_user         Int
     Billing         String
+
+
+    isValid         Boolean     @default(true)
 }
 
-model Society{
+model Societies{
     id              Int         @id                     @default(autoincrement())
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
 
-    societeyAuth    String
+    societyAuth    String
     area            String?
     societyName     String
     sepa            String
     idRestaurant    String?
 
-    societyUsers    UserHasSociete[]
+
+    isValid         Boolean     @default(true)
+
+    societyUsers    UserHasSociety[]
 }
