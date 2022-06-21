@@ -43,7 +43,7 @@ model Articles{
     name            String
     timePreparedDef Int
     quantity        Int
-    pathPicture     String
+    pathPicture     String?
     price           Float
 
     container       Menus       @relation(fields: [containerId], references: [id])
