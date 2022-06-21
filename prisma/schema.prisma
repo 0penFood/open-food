@@ -29,7 +29,7 @@ model Users{
     ssoGitHub      Boolean     @default(false)
     lastLogin      DateTime?
 
-
+    roles           String      @default("001")
     isValid         Boolean     @default(true)
 
     userSociety    UserHasSociety[]
