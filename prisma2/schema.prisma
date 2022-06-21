@@ -26,7 +26,7 @@ model Menus{
 
     name            String
     details         String?
-    price           Float
+    price           Double
     timePreparedDef Int
     articles        Articles[]
 
@@ -44,7 +44,7 @@ model Articles{
     timePreparedDef Int
     quantity        Int
     pathPicture     String?
-    price           Float
+    price           Double
 
     container       Menus       @relation(fields: [containerId], references: [id])
     containerId    String       @db.ObjectId
@@ -63,13 +63,13 @@ model Rankings{
 }
 
 
-model PatnershipSocietys{
+model PatnershipSocieties{
     id              String      @id             @default(auto())    @map("_id")     @db.ObjectId
     createdAt       DateTime    @default(now())
     updatedAt       DateTime    @updatedAt
 
     sponsorSociety  String
-    partnerSociery  String
+    partnerSociety  String
     isValid         Boolean
 }
 
@@ -95,7 +95,7 @@ model Commandes{
     idLivreur       Int
     timeDelivery    DateTime
     state           Int
-    price           Float
+    price           Double
     deliveryAddress String
 
     articles        ArticlesCommandes[]
