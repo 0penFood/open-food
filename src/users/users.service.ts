@@ -1,9 +1,9 @@
-import {ForbiddenException, Injectable} from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { Logger } from '../../helpers/logger'
 import {CreateUserDto} from './dto/create-user.dto';
 import {UpdateUserDto} from './dto/update-user.dto';
-import {PrismaClient} from '@prisma/client';
-import {PrismaClientKnownRequestError} from '@prisma/client/runtime';
-import { Logger } from '../../helpers/logger'
 import { CreateUserSocietyDto } from "./dto/create-user-society.dto";
 import { UpdateUserSocietiesDto } from "./dto/update-user-societies.dto";
 import { CreateUserBillingDto } from "./dto/create-user-billing.dto";
@@ -17,15 +17,39 @@ const prisma = new PrismaClient();
 export class UsersService {
   async findUserAdm(email: string) {
     await prisma.$connect();
-    const User = await prisma.users.findUnique(
+
+    if(email)
+    {
+      try {
+        const User = await prisma.users.findUnique(
+          {
+            where:{
+              email: email,
+            },
+          }
+        );
+        await prisma.$disconnect();
+        return User;
+      }
+      catch (e) {
+        if(e instanceof PrismaClientKnownRequestError)
         {
-          where:{
-                email: email,
-                },
+          if(e.code === 'P2002')
+          {
+            prisma.$disconnect();
+            await Logger.errorLog('api', 'Try access User -> No found Email');
+            //throw new UnauthorizedException('Error : Try access User -> No found Email');
+          }
         }
-    );
-    await prisma.$disconnect();
-    return User;
+        prisma.$disconnect();
+        await Logger.errorLog('api', 'Error : '+e.message);
+        throw e;
+      }
+    }
+    else {
+      await Logger.errorLog('api', 'Try access User -> No found Email');
+      await prisma.$disconnect();
+    }
   }
   // Create Function Part
   async create(createUserDto: CreateUserDto) {
