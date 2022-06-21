@@ -15,7 +15,18 @@ const prisma = new PrismaClient();
 
 @Injectable()
 export class UsersService {
-
+  async findUserAdm(email: string) {
+    await prisma.$connect();
+    const User = await prisma.users.findUnique(
+        {
+          where:{
+                email: email,
+                },
+        }
+    );
+    await prisma.$disconnect();
+    return User;
+  }
   // Create Function Part
   async create(createUserDto: CreateUserDto) {
     prisma.$connect();
