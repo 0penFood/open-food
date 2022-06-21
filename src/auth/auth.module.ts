@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from '../roles/strategy/local.strategy';
-import { JwtStrategy } from '../roles/strategy/jwt.strategy';
 import { UsersModule } from '../users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
@@ -16,7 +15,7 @@ import { AuthController } from './auth.controller';
         signOptions: { expiresIn: '7 days' },
       }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy],
   exports : [AuthService],
   controllers: [AuthController],
 })
