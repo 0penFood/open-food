@@ -9,6 +9,9 @@ const prisma2 = new PrismaClient()
 @Injectable()
 export class RankingsService {
 
+
+  // ######################### CREATE FUNCTION PART #########################
+
   async create(createRankingDto: CreateRankingDto) {
     await prisma2.$connect();
     try
@@ -28,6 +31,9 @@ export class RankingsService {
     }
   }
 
+
+  // ######################### FIND FUNCTION PART #########################
+
   async findOne(id: string) {
     await prisma2.$connect();
     try
@@ -40,7 +46,7 @@ export class RankingsService {
       await prisma2.$disconnect();
       await Logger.infoLog('api', 'Recover ranking with id ' + id );
 
-      return ranking;
+      return await this.concatData(ranking);
     }
     catch (e)
     {
@@ -50,7 +56,7 @@ export class RankingsService {
     }
   }
 
-  async findAllByRestaurant(id: string) {
+  async findAllBySociety(id: string) {
     await prisma2.$connect();
     try
     {
@@ -60,20 +66,9 @@ export class RankingsService {
         }
       });
       await prisma2.$disconnect();
-      await Logger.infoLog('api', 'Recover all rankings with id restaurant ' + id );
+      await Logger.infoLog('api', 'Recover all rankings with id society ' + id );
 
-      let rankings = {};
-
-      allRankings.forEach(ranking => {
-        rankings[ranking.id] = {
-          UserId: ranking.userId,
-          SocietyId: ranking.idSociety,
-          Stars: ranking.stars,
-          Commentary: ranking.commentary,
-        }
-      });
-
-      return rankings;
+      return await this.concatData(allRankings);
     }
     catch (e)
     {
@@ -95,18 +90,7 @@ export class RankingsService {
       await prisma2.$disconnect();
       await Logger.infoLog('api', 'Recover all rankings with id user ' + id );
 
-      let rankings = {};
-
-      allRankings.forEach(ranking => {
-        rankings[ranking.id] = {
-          UserId: ranking.userId,
-          SocietyId: ranking.idSociety,
-          Stars: ranking.stars,
-          Commentary: ranking.commentary,
-        }
-      });
-
-      return rankings;
+      return await this.concatData(allRankings);
     }
     catch (e)
     {
@@ -116,9 +100,27 @@ export class RankingsService {
     }
   }
 
+  async concatData(rankingsArray: any)
+  {
+    let rankings = {};
+
+    rankingsArray.forEach(ranking => {
+      rankings[ranking.id] = {
+        UserId: ranking.userId,
+        SocietyId: ranking.idSociety,
+        Stars: ranking.stars,
+        Commentary: ranking.commentary,
+      }
+    });
+
+    return rankings;
+  }
+
+
+  // ######################### UDPATE FUNCTION PART #########################
+
   async update(id: string, updateRankingDto: UpdateRankingDto) {
     await prisma2.$connect();
-
     try
     {
       if(id != null)
@@ -150,6 +152,9 @@ export class RankingsService {
       throw e;
     }
   }
+
+
+  // ######################### REMOVE FUNCTION PART #########################
 
   async remove(id: string) {
     await prisma2.$connect();
