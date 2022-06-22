@@ -1,8 +1,8 @@
-import { Body, ExecutionContext, Injectable } from "@nestjs/common";
+import { ExecutionContext, Injectable } from "@nestjs/common";
 import { Observable } from "rxjs";
 import { LocalStrategy } from "../strategy/local.strategy";
-import { AuthService } from "../auth.service";
-import { AuthDto } from "../dto/auth.dto";
+import { AuthService } from "../../auth/auth.service";
+import { AuthDto } from "../../auth/dto/auth.dto";
 
 @Injectable()
 export class LocalAuthGuard{

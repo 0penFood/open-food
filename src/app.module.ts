@@ -4,8 +4,11 @@ import { PrismaModule } from './prisma/prisma.module';
 import { SocietiesModule } from './societies/societies.module';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 import { AuthModule } from './auth/auth.module';
+import { RolesService } from './roles/roles.service';
+import { RolesModule } from './roles/roles.module';
 
 @Module({
-  imports: [UsersModule, PrismaModule, SocietiesModule, RestaurantsModule, AuthModule],
+  imports: [UsersModule, PrismaModule, SocietiesModule, RestaurantsModule, AuthModule, RolesModule],
+  providers: [RolesService],
 })
 export class AppModule {}

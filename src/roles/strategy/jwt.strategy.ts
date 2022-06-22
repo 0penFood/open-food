@@ -20,9 +20,4 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         var jwtservice = new JwtService();
         return jwtservice.decode(val, {json: true});
     }
-
-    async validate(payload: any) {
-
-        return { email: payload.email };
-    }
 }
