@@ -26,7 +26,7 @@ model Menus{
 
     name            String
     details         String?
-    price           Double
+    price           Float       @db.Double
     timePreparedDef Int
     articles        Articles[]
 
@@ -44,7 +44,7 @@ model Articles{
     timePreparedDef Int
     quantity        Int
     pathPicture     String?
-    price           Double
+    price           Float       @db.Double
 
     container       Menus       @relation(fields: [containerId], references: [id])
     containerId    String       @db.ObjectId
@@ -95,7 +95,7 @@ model Commandes{
     idLivreur       Int
     timeDelivery    DateTime
     state           Int
-    price           Double
+    price           Float       @db.Double
     deliveryAddress String
 
     articles        ArticlesCommandes[]
