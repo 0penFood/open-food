@@ -290,9 +290,12 @@ export class UsersService {
   async findAllLinkSocietiesSociety(id: number) {
     prisma.$connect();
 
-    const allUserSociety = await prisma.userHasSociety.findMany({where: {
-      fk_society : id
-      }});
+    const allUserSociety = await prisma.userHasSociety.findMany({where:
+        {
+          fk_society : id,
+          isValid : true,
+        }
+    });
 
     prisma.$disconnect();
     let users = {};
@@ -300,12 +303,9 @@ export class UsersService {
     allUserSociety.forEach(userSociety => {
       users[userSociety.id] = {
         user_id: userSociety.fk_user,
-        society_id: userSociety.fk_society,
-        where: {
-          isValid: true,
-        }
+        society_id: userSociety.fk_society
       }
-    })
+    });
     await Logger.infoLog('api', 'All users link to society with id ' + id + ' have been read');
     return users;
   }
@@ -566,7 +566,7 @@ export class UsersService {
   }
 
   async deleteBilling(id: number) {
-    prisma.$connect();
+    await prisma.$connect();
     try
     {
       await prisma.userHasBilling.delete({
@@ -574,13 +574,13 @@ export class UsersService {
           id: id
         }
       });
-      prisma.$disconnect();
+      await prisma.$disconnect();
       await Logger.infoLog('api', 'Billing with id ' + id + ' deleted');
       return 'This action removes a ' + String(id) + ' Billing';
     }
     catch (e)
     {
-      prisma.$disconnect();
+      await prisma.$disconnect();
       await Logger.errorLog('api', 'Error : '+e.message);
       throw e;
     }
