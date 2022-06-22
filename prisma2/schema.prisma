@@ -91,9 +91,9 @@ model Commandes{
     updatedAt       DateTime        @updatedAt
 
     idUser          Int
-    idRestau        Int
+    idRestau        String
     idLivreur       Int
-    timeDelivery    DateTime
+    timeDelivery    String
     state           Int
     price           Float       @db.Double
     deliveryAddress String
