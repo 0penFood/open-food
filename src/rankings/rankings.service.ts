@@ -29,7 +29,25 @@ export class RankingsService {
   }
 
   async findOne(id: string) {
-    return `This action returns a #${id} ranking`;
+    await prisma2.$connect();
+    try
+    {
+      const ranking = await prisma2.rankings.findUnique({
+        where: {
+          id: id
+        }
+      });
+      await prisma2.$disconnect();
+      await Logger.infoLog('api', 'Recover ranking with id ' + id );
+
+      return ranking;
+    }
+    catch (e)
+    {
+      await prisma2.$disconnect();
+      await Logger.errorLog('api', 'Error : '+e.message);
+      throw e;
+    }
   }
 
   async findAllByRestaurant(id: string) {
