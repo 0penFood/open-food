@@ -24,4 +24,16 @@ export class RolesService {
             throw new ForbiddenException('Forbidden');
         }
     }
+
+    async currentRoleYourself(token: string) {
+        let userData = await this.getTokenData(token);
+        const userService = new UsersService();
+        const userDB = await userService.findUserAdm(userData.email);
+
+        if (userDB.roles === userData.roles && userDB.id === userData.id) {
+            return userData.roles;
+        } else {
+            throw new ForbiddenException('Forbidden');
+        }
+    }
 }
