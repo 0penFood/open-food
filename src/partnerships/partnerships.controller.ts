@@ -45,11 +45,6 @@ export class PartnershipsController {
     return this.partnershipsService.findUserPartner(+id);
   }
 
-  @Get()
-  findAll() {
-    return this.partnershipsService.findAll();
-  }
-
 
   // ###################### UPDATE ROUTE PART ######################
 
@@ -66,11 +61,11 @@ export class PartnershipsController {
 
   // ###################### DELETE ROUTE PART ######################
 
-  @Delete(':id')
+  @Delete(':id/society')
   removeSociety(@Param('id') id: string) {
     return this.partnershipsService.removeSociety(id);
   }
-  @Delete(':id')
+  @Delete(':id/user')
   removeUser(@Param('id') id: string) {
     return this.partnershipsService.removeUser(id);
   }
