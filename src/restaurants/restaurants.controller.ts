@@ -11,6 +11,9 @@ import { UpdateRestaurantMenuArticleDto } from "./dto/update-restaurant-menu-art
 export class RestaurantsController {
   constructor(private readonly restaurantsService: RestaurantsService) {}
 
+
+  // ################# CREATE ROUTE PART #################
+
   @Post()
   create(@Body() createRestaurantDto: CreateRestaurantDto) {
     return this.restaurantsService.create(createRestaurantDto);
@@ -25,6 +28,9 @@ export class RestaurantsController {
   createMenuArticle(@Param('id') id: string, @Body() createRestaurantMenuArticleDto: CreateRestaurantMenuArticleDto) {
     return this.restaurantsService.createMenuArticle(id, createRestaurantMenuArticleDto);
   }
+
+
+  // ################# FIND ROUTE PART #################
 
   @Get()
   findAll() {
@@ -46,6 +52,9 @@ export class RestaurantsController {
     return this.restaurantsService.findOneRestaurant(id);
   }
 
+
+  // ################# UPDATE ROUTE PART #################
+
   @Patch(':id')
   updateRestaurant(@Param('id') id: string, @Body() updateRestaurantDto: UpdateRestaurantDto) {
     return this.restaurantsService.updateRestaurant(id, updateRestaurantDto);
@@ -62,6 +71,7 @@ export class RestaurantsController {
   }
 
 
+  // ################# DELETE ROUTE PART #################
 
   @Delete(':id')
   removeRestaurant(@Param('id') id: string) {
