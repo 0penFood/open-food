@@ -7,9 +7,10 @@ import { AuthModule } from './auth/auth.module';
 import { RolesService } from './roles/roles.service';
 import { RolesModule } from './roles/roles.module';
 import { RankingsModule } from './rankings/rankings.module';
+import { CommandesModule } from './commandes/commandes.module';
 
 @Module({
-  imports: [UsersModule, PrismaModule, SocietiesModule, RestaurantsModule, AuthModule, RolesModule, RankingsModule],
+  imports: [UsersModule, PrismaModule, SocietiesModule, RestaurantsModule, AuthModule, RolesModule, RankingsModule, CommandesModule],
   providers: [RolesService],
 })
 export class AppModule {}
