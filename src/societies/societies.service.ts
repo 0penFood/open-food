@@ -3,52 +3,158 @@ import { CreateSocietyDto }                 from './dto/create-society.dto';
 import { UpdateSocietyDto }                 from './dto/update-society.dto';
 import { PrismaClient }                     from "@prisma/client";
 import { PrismaClientKnownRequestError }    from "@prisma/client/runtime";
+import { Logger } from "../../helpers/logger";
 
 const prisma = new PrismaClient();
 
 @Injectable()
 export class SocietiesService {
+
+
+  // ######################### CREATE ROUTE PART #########################
+
   async create(createSocietyDto: CreateSocietyDto) {
-    prisma.$connect();
+    await prisma.$connect();
     try
     {
       await prisma.societies.create({data: createSocietyDto});
-      prisma.$disconnect();
-      return 'This action adds a new society';
+      await prisma.$disconnect();
+      await Logger.infoLog('api', 'Society with name ' + createSocietyDto.societyName + ' created');
+      return {
+        message: 'Society with name ' + createSocietyDto.societyName + ' created',
+      };
     }
     catch (e)
     {
-      if(e instanceof PrismaClientKnownRequestError)
-      {
-        if(e.code === 'P2002')
-        {
-          prisma.$disconnect();
-          throw new ForbiddenException('Error : Email is already used');
-        }
-      }
       prisma.$disconnect();
+      await Logger.errorLog('api', 'Error : ' + e.message);
       throw e;
     }
   }
 
-  async findAll() {
-    prisma.$connect();
-    const allSocieties = await prisma.societies.findMany();
-    prisma.$disconnect();
-    return `This action returns all users` + allSocieties;
+
+  // ######################### FIND ROUTE PART #########################
+
+  async findAllFull() {
+    await prisma.$connect();
+    try
+    {
+      const allSocieties = await prisma.societies.findMany({
+        where: {
+          isValid: true,
+        }
+      });
+      await prisma.$disconnect();
+      await Logger.infoLog('api', 'Recover all society with full information' );
+
+      return await this.concatData(allSocieties, true);
+    }
+    catch (e)
+    {
+      await prisma.$disconnect();
+      await Logger.errorLog('api', 'Error : '+e.message);
+      throw e;
+    }
   }
 
-  async findOne(id: number) {
-    prisma.$connect();
-    const User = await prisma.societies.findUnique({where: {
-        id: id,
-      },});
-    prisma.$disconnect();
-    return `This action returns a #${id} society`;
+  async findAllPartial() {
+    await prisma.$connect();
+    try
+    {
+      const allSocieties = await prisma.societies.findMany({
+        where: {
+          isValid: true,
+        }
+      });
+      await prisma.$disconnect();
+      await Logger.infoLog('api', 'Recover all society with partial information');
+
+      return await this.concatData(allSocieties, false);
+    }
+    catch (e)
+    {
+      await prisma.$disconnect();
+      await Logger.errorLog('api', 'Error : '+e.message);
+      throw e;
+    }
   }
+
+  async findOneFull(id: number) {
+    await prisma.$connect();
+    try
+    {
+      const society = await prisma.societies.findUnique({where: {
+          id: id,
+        },});
+      await prisma.$disconnect();
+      await Logger.infoLog('api', 'Recover full data society with id ' + id );
+
+      return await this.concatData(society, true);
+    }
+    catch (e)
+    {
+      await prisma.$disconnect();
+      await Logger.errorLog('api', 'Error : '+e.message);
+      throw e;
+    }
+  }
+
+  async findOnePartial(id: number) {
+    await prisma.$connect();
+    try
+    {
+      const society = await prisma.societies.findUnique({
+        where: {
+            id: id,
+          },
+      });
+      await prisma.$disconnect();
+      await Logger.infoLog('api', 'Recover partial data society with id ' + id );
+
+      return await this.concatData(society, false);
+    }
+    catch (e)
+    {
+      await prisma.$disconnect();
+      await Logger.errorLog('api', 'Error : '+e.message);
+      throw e;
+    }
+  }
+
+  async concatData(societiesArray: any, full: boolean)
+  {
+    let societies = {};
+    if(full)
+    {
+      societiesArray.forEach(society => {
+        societies[society.id] = {
+          societyAuth:  society.societyAuth,
+          societyName:  society.societyName,
+          sepa:         society.sepa,
+          area:         society.area,
+          idRestaurant: society.idRestaurant,
+        }
+      });
+    }
+    else {
+      societiesArray.forEach(society => {
+        societies[society.id] = {
+          societyAuth:  society.societyAuth,
+          societyName:  society.societyName,
+          idRestaurant: society.idRestaurant,
+          area:         society.area,
+        }
+      });
+    }
+
+    return societies;
+  }
+
+
+  // ######################### UPDATE ROUTE PART #########################
 
   async update(id: number, updateSocietyDto: UpdateSocietyDto) {
-    prisma.$connect();
+    await prisma.$connect();
     try
     {
       await prisma.societies.update({
@@ -57,32 +163,40 @@ export class SocietiesService {
           id: id,
         },
       });
-      prisma.$disconnect();
-      return `This action updates a #${id} society`;
+      await prisma.$disconnect();
+      await Logger.infoLog('api', 'Society with id ' + id + ' modificated ');
+      return {
+        message: 'Society with id ' + id + ' modificated ',
+      };
     }
     catch (e)
     {
-      prisma.$disconnect();
-      if(e instanceof PrismaClientKnownRequestError)
-      {
-        if(e.code === 'P2002')
-        {
-          throw new ForbiddenException('Email is already used');
-        }
-      }
+      await prisma.$disconnect();
+      await Logger.errorLog('api', 'Error : ' + e.message);
       throw e;
     }
   }
 
+
+  // ######################### REMOVE ROUTE PART #########################
+
   async remove(id: number) {
-    prisma.$connect();
+    await prisma.$connect();
     try
     {
-      await prisma.societies.delete({
-        where: {id: id}
+      await prisma.societies.update({
+        where: {
+          id: id
+        },
+        data:{
+          isValid: false
+        },
       });
-      prisma.$disconnect();
-      return 'This action removes a #${id} society';
+      await prisma.$disconnect();
+      await Logger.infoLog('api', 'Society with id ' + id + ' disabled');
+      return {
+        message: 'Society with id ' + id + ' disabled',
+      };
     }
     catch (e)
     {
@@ -90,11 +204,13 @@ export class SocietiesService {
       {
         if(e.code === 'P2003')
         {
-          prisma.$disconnect();
+          await prisma.$disconnect();
+          await Logger.errorLog('api', 'Error : '+e.message);
           throw new ForbiddenException('Error: Foreign key contraints failed delete');
         }
       }
-      prisma.$disconnect();
+      await prisma.$disconnect();
+      await Logger.errorLog('api', 'Error : '+e.message);
       throw e;
     }
   }

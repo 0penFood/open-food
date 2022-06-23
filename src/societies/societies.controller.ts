@@ -7,27 +7,49 @@ import { UpdateSocietyDto } from './dto/update-society.dto';
 export class SocietiesController {
   constructor(private readonly societiesService: SocietiesService) {}
 
-  @Post('create')
+
+  // ######################### CREATE ROUTE PART #########################
+
+  @Post('')
   create(@Body() createSocietyDto: CreateSocietyDto) {
     return this.societiesService.create(createSocietyDto);
   }
 
-  @Get('read')
-  findAll() {
-    return this.societiesService.findAll();
+
+  // ######################### FIND ROUTE PART #########################
+
+  @Get('full')
+  findAllFull() {
+    return this.societiesService.findAllFull();
   }
 
-  @Get('read/:id')
-  findOne(@Param('id') id: string) {
-    return this.societiesService.findOne(+id);
+  @Get('partial')
+  findAllPartial() {
+    return this.societiesService.findAllPartial();
   }
 
-  @Patch('update/:id')
+  @Get(':id/full')
+  findOneFull(@Param('id') id: string) {
+    return this.societiesService.findOneFull(+id);
+  }
+
+  @Get(':id/partial')
+  findOnePartial(@Param('id') id: string) {
+    return this.societiesService.findOnePartial(+id);
+  }
+
+
+  // ######################### UPDATE ROUTE PART #########################
+
+  @Patch(':id')
   update(@Param('id') id: string, @Body() updateSocietyDto: UpdateSocietyDto) {
     return this.societiesService.update(+id, updateSocietyDto);
   }
 
-  @Delete('delete/:id')
+
+  // ######################### REMOVE ROUTE PART #########################
+
+  @Delete(':id')
   remove(@Param('id') id: string) {
     return this.societiesService.remove(+id);
   }
