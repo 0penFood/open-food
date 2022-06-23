@@ -21,7 +21,9 @@ import { UpdateUserBillingDto } from "./dto/update-user-billing.dto";
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  // Create Links Part
+
+  // ################# CREATE ROUTE PART #################
+
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
@@ -43,7 +45,8 @@ export class UsersController {
   }
 
 
-  // Read Links Part
+  // ################# FIND ROUTE PART #################
+
   @Get()
   findAll() {
     return this.usersService.findAll();
@@ -80,7 +83,8 @@ export class UsersController {
   }
 
 
-  // Update Links Part
+  // ################# UPDATE ROUTE PART #################
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
@@ -102,15 +106,18 @@ export class UsersController {
     return this.usersService.updateBilling(+id, updateUserBillingDto);
   }
 
-  // Remove Links Part
+
+  // ################# REMOVE ROUTE PART #################
+
   @Patch(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
   }
 
 
-  // Delete Links Part
-  @Delete(':id/del')
+  // ################# DELETE ROUTE PART #################
+
+  @Delete(':id')
   delete(@Param('id') id: string) {
     return this.usersService.delete(+id);
   }
