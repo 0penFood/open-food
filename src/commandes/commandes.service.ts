@@ -54,6 +54,29 @@ export class CommandesService {
 
   // ######################### FIND ROUTE PART #########################
 
+  async findAll() {
+    await prisma2.$connect();
+    try
+    {
+      const allCommandes = await prisma2.commandes.findMany({
+        include:{
+          articles: true
+        }
+      });
+      await prisma2.$disconnect();
+      await Logger.infoLog('api', 'Recover all commandes ' );
+
+      return this.concatData(allCommandes);
+    }
+    catch (e)
+    {
+      await prisma2.$disconnect();
+      await Logger.errorLog('api', 'Error : '+e.message);
+      throw e;
+    }
+  }
+
+
   async findAllUser(id: number) {
     await prisma2.$connect();
     try

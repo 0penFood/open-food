@@ -121,6 +121,48 @@ export class SocietiesService {
     }
   }
 
+  async findOneRestauFull(id: string) {
+    await prisma.$connect();
+    try
+    {
+      const society = await prisma.societies.findMany({where: {
+          idRestaurant: id,
+        },});
+      await prisma.$disconnect();
+      await Logger.infoLog('api', 'Recover full data society with id restaurant ' + id );
+
+      return await this.concatData(society, true);
+    }
+    catch (e)
+    {
+      await prisma.$disconnect();
+      await Logger.errorLog('api', 'Error : '+e.message);
+      throw e;
+    }
+  }
+
+  async findOneRestauPartial(id: string) {
+    await prisma.$connect();
+    try
+    {
+      const society = await prisma.societies.findMany({
+        where: {
+          idRestaurant: id,
+          },
+      });
+      await prisma.$disconnect();
+      await Logger.infoLog('api', 'Recover partial data society with id restaurant ' + id );
+
+      return await this.concatData(society, false);
+    }
+    catch (e)
+    {
+      await prisma.$disconnect();
+      await Logger.errorLog('api', 'Error : '+e.message);
+      throw e;
+    }
+  }
+
   async concatData(societiesArray: any, full: boolean)
   {
     let societies = {};
@@ -128,6 +170,7 @@ export class SocietiesService {
     {
       societiesArray.forEach(society => {
         societies[society.id] = {
+          societyId:    society.id,
           societyAuth:  society.societyAuth,
           societyName:  society.societyName,
           sepa:         society.sepa,
@@ -139,6 +182,7 @@ export class SocietiesService {
     else {
       societiesArray.forEach(society => {
         societies[society.id] = {
+          societyId:    society.id,
           societyAuth:  society.societyAuth,
           societyName:  society.societyName,
           idRestaurant: society.idRestaurant,
@@ -146,7 +190,6 @@ export class SocietiesService {
         }
       });
     }
-
     return societies;
   }
 

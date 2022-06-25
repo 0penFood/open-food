@@ -14,7 +14,7 @@ export class RolesGuard implements CanActivate {
         const rolesService = new RolesService()
 
         return rolesService.currentRole(request.headers["authorization"].split(" ")[1]).then((res: any) => {
-             if(this.role.find(res => res === res)) {
+             if(this.role.find(res2 => res2 === res)) {
                  return true;
              }
         })

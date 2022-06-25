@@ -92,7 +92,7 @@ model Commandes{
 
     idUser          Int
     idRestau        String
-    idLivreur       Int
+    idLivreur       Int?
     timeDelivery    String
     state           Int
     price           Float       @db.Double

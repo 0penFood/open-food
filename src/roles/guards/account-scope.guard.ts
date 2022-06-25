@@ -13,10 +13,17 @@ export class AccountScopeGuard implements CanActivate {
         const request = context.switchToHttp().getRequest();
         const rolesService = new RolesService()
 
-        return rolesService.currentRoleYourself(request.headers["authorization"].split(" ")[1]).then((res: any) => {
-            if(this.role.find(res => res === res)) {
-                return true;
-            }
-        })
+        try{
+            return rolesService.currentRoleYourself(request.headers["authorization"].split(" ")[1]).then((res: any) => {
+                if(this.role.find(res2 => res === res2)) {
+                    return true;
+                }
+            })
+        }
+        catch(e)
+        {
+            return false;
+        }
+
     }
 }

@@ -266,7 +266,7 @@ export class UsersService {
     }
   }
 
-  async findAllLinkSocietiesSociety(id: number) {
+  async findAllLinkSocietiesSociety(id: number){
     await prisma.$connect();
     try
     {
@@ -373,59 +373,78 @@ export class UsersService {
     }
   }
 
-  async concatData(usersArray: any, type: number)
+  async concatData(usersArray: any, type: number) : Promise<JSON>
   {
     let users = {};
-    if( type == 1)
-    {
-      usersArray.forEach(user => {
-        users[user.id] = {
-          idUser: user.id,
-          name: user.firstName + '_' + user.lastName,
-          email: user.email,
-          phone: user.phone,
-        }
-      });
-    }
-    else if(type == 2)
-    {
-      usersArray.forEach(addresss => {
-        users[addresss.id] = {
-          id: addresss.id,
-          id_user: addresss.id_user,
-          address: addresss.address,
-        }
-      });
-    }
-    else if(type == 3)
-    {
-      usersArray.forEach(billing => {
-        users[billing.id] = {
-          id: billing.id,
-          id_user: billing.id_user,
-          billing: billing.billing,
-        }
-      });
-    }
-    else if(type == 4)
+
+    if(type == 4)
     {
       usersArray.forEach(userSociety => {
         users[userSociety.id] = {
-          user_id: userSociety.fk_user,
+          user_id:    userSociety.fk_user,
           society_id: userSociety.fk_society,
         }
       });
+      return JSON.parse(JSON.stringify(users));
     }
-    else if(type == 5)
+    switch(type)
     {
-      usersArray.forEach(userSociety => {
-        users[userSociety.id] = {
-          user_id: userSociety.fk_user,
-          society_id: userSociety.fk_society
-        }
-      });
+      case 1:
+        usersArray.forEach(user => {
+          users[user.id] = {
+            idUser: user.id,
+            name: user.firstName + '_' + user.lastName,
+            email: user.email,
+            phone: user.phone,
+          }
+        });
+        break;
+
+      case 2:
+        usersArray.forEach(addresss => {
+          users[addresss.id] = {
+            id: addresss.id,
+            id_user: addresss.id_user,
+            address: addresss.address,
+          }
+        });
+        break;
+
+      case 3:
+        usersArray.forEach(billing => {
+          users[billing.id] = {
+            id: billing.id,
+            id_user: billing.id_user,
+            billing: billing.billing,
+          }
+        });
+        break;
+
+      case 4:
+        usersArray.forEach(userSociety => {
+          let rtn2 = {
+            user_id: userSociety.fk_user,
+            society_id: userSociety.fk_society,
+          };
+
+          users[userSociety.id] = rtn2;
+        });
+        break;
+
+      case 5:
+        usersArray.forEach(userSociety => {
+          users[userSociety.id] = {
+            user_id:    userSociety.fk_user,
+            society_id: userSociety.fk_society,
+          }
+        });
+        break;
     }
-    return users;
+
+    //userJson = <JSON>users;
+
+    //userJson.push();
+    return JSON.parse(JSON.stringify(users));
   }
 
 
