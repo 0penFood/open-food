@@ -31,6 +31,17 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @Post("restaurant")
+  createRest(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.createRest(createUserDto);
+  }
+
+  @Post("delivery")
+  createDeliv(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.createDeliv(createUserDto);
+  }
+
+
   @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS, process.env.USER_RIGHTS]))
   @Post('society')
   createLinkSociety(@Body() createUserSocietyDto: CreateUserSocietyDto) {

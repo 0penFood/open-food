@@ -10,6 +10,7 @@ import { CreateUserBillingDto } from "./dto/create-user-billing.dto";
 import { CreateUserAddressDto } from "./dto/create-user-address.dto";
 import { UpdateUserAddressDto } from "./dto/update-user-address.dto";
 import { UpdateUserBillingDto } from "./dto/update-user-billing.dto";
+import { CreateUserRoleDto } from "./dto/create-user-role.dto";
 
 const prisma = new PrismaClient();
 
@@ -29,6 +30,74 @@ export class UsersService {
 
       return {
         message: 'User with name "'+createUserDto.firstName + '_' + createUserDto.lastName + '" created',
+      };
+    }
+    catch (e)
+    {
+      if(e instanceof PrismaClientKnownRequestError)
+      {
+        if(e.code === 'P2002')
+        {
+          await prisma.$disconnect();
+          await Logger.errorLog('api', 'Attempt to create a user with an already used email');
+          throw new ForbiddenException('Error : Email is already used');
+        }
+      }
+      await prisma.$disconnect();
+      await Logger.errorLog('api', 'Error : '+e.message);
+      throw e;
+    }
+  }
+
+  async createRest(createUserDto: CreateUserDto) {
+    await prisma.$connect();
+    try
+    {
+      let usetDtoID : CreateUserRoleDto = new CreateUserRoleDto(createUserDto);
+      usetDtoID.roles = process.env.RESTAURANT_RIGHTS;
+
+      await prisma.users.create({
+        data: usetDtoID
+      });
+      await prisma.$disconnect();
+      await Logger.infoLog('api', 'User named "' + createUserDto.firstName + '_' + createUserDto.lastName + '" with role restaurant created');
+
+      return {
+        message: 'User named "'+createUserDto.firstName + '_' + createUserDto.lastName + '" with role restaurant created',
+      };
+    }
+    catch (e)
+    {
+      if(e instanceof PrismaClientKnownRequestError)
+      {
+        if(e.code === 'P2002')
+        {
+          await prisma.$disconnect();
+          await Logger.errorLog('api', 'Attempt to create a user with an already used email');
+          throw new ForbiddenException('Error : Email is already used');
+        }
+      }
+      await prisma.$disconnect();
+      await Logger.errorLog('api', 'Error : '+e.message);
+      throw e;
+    }
+  }
+
+  async createDeliv(createUserDto: CreateUserDto) {
+    await prisma.$connect();
+    try
+    {
+      let usetDtoID : CreateUserRoleDto = new CreateUserRoleDto(createUserDto);
+      usetDtoID.roles = process.env.DRIVER_RIGHTS;
+
+      await prisma.users.create({
+        data: usetDtoID
+      });
+      await prisma.$disconnect();
+      await Logger.infoLog('api', 'User named "' + createUserDto.firstName + '_' + createUserDto.lastName + '" with role driver created');
+
+      return {
+        message: 'User named "'+createUserDto.firstName + '_' + createUserDto.lastName + '" with role driver created',
       };
     }
     catch (e)
