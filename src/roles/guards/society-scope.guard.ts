@@ -20,6 +20,9 @@ export class SocietyScopeGuard implements CanActivate {
                     if(this.role.find(res2 => res === res2)) {
                         return true;
                     }
+                    else {
+                        return false;
+                    }
                 });
             });
         }
