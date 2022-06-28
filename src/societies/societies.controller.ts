@@ -3,7 +3,7 @@ import { SocietiesService } from './societies.service';
 import { CreateSocietyDto } from './dto/create-society.dto';
 import { UpdateSocietyDto } from './dto/update-society.dto';
 import { RolesGuard } from "../roles/guards/roles.guard";
-import { SocietyScopeGuard } from "../roles/guards/society-scope.guard";
+import { ComposeUserAuthGuard } from "../roles/guards/compose-user-auth.guard";
 
 @Controller('societies')
 export class SocietiesController {
@@ -21,7 +21,7 @@ export class SocietiesController {
 
   // ######################### FIND ROUTE PART #########################
 
-  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS]) || new SocietyScopeGuard([process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS]))
+  @UseGuards(new ComposeUserAuthGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS], [], [process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS]))
   @Get('full')
   findAllFull() {
     return this.societiesService.findAllFull();
@@ -32,7 +32,7 @@ export class SocietiesController {
     return this.societiesService.findAllPartial();
   }
 
-  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS]) || new SocietyScopeGuard([process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS]))
+  @UseGuards(new ComposeUserAuthGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS], [], [process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS]))
   @Get(':id/full')
   findOneFull(@Param('id') id: string) {
     return this.societiesService.findOneFull(+id);
@@ -43,7 +43,7 @@ export class SocietiesController {
     return this.societiesService.findOnePartial(+id);
   }
 
-  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS]) || new SocietyScopeGuard([process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS]))
+  @UseGuards(new ComposeUserAuthGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS], [], [process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS]))
   @Get(':id/restau/full')
   findOneRestauFull(@Param('id') id: string) {
     return this.societiesService.findOneRestauFull(id);
@@ -58,7 +58,7 @@ export class SocietiesController {
 
   // ######################### UPDATE ROUTE PART #########################
 
-  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS]) || new SocietyScopeGuard([process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS]))
+  @UseGuards(new ComposeUserAuthGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS], [], [process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS]))
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateSocietyDto: UpdateSocietyDto) {
     return this.societiesService.update(+id, updateSocietyDto);
@@ -67,7 +67,7 @@ export class SocietiesController {
 
   // ######################### REMOVE ROUTE PART #########################
 
-  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS]) || new SocietyScopeGuard([process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS]))
+  @UseGuards(new ComposeUserAuthGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS], [], [process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS]))
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.societiesService.remove(+id);

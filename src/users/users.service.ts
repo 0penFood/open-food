@@ -186,6 +186,34 @@ export class UsersService {
       throw e;
     }
   }
+  async findRole(id: number) {
+    await prisma.$connect();
+    try
+    {
+      const userData = await prisma.users.findUnique({
+        where: {
+          id: id
+        }});
+
+      await prisma.$disconnect();
+      await Logger.infoLog('api', 'All users have been read');
+
+      let user = {};
+
+      user[0] = {
+        idUser: userData.id,
+        role: userData.roles,
+      }
+
+      return user;
+    }
+    catch (e)
+    {
+      await prisma.$disconnect();
+      await Logger.errorLog('api', 'Error : '+e.message);
+      throw e;
+    }
+  }
 
   async findAllAddress(id: number) {
     await prisma.$connect();
@@ -341,7 +369,16 @@ export class UsersService {
 
       await prisma.$disconnect();
       await Logger.infoLog('api', 'User with id '+id+' read');
-      return await this.concatData(User, 1);
+      if(User != null)
+      {
+        return await this.concatData(User, -1);
+      }
+      else
+      {
+        return {
+          message: "Id not Exist",
+        }
+      }
     }
     catch (e)
     {
@@ -363,7 +400,7 @@ export class UsersService {
 
       await prisma.$disconnect();
       await Logger.infoLog('api', 'User with email ' + email + ' read');
-      return await this.concatData(User, 1);
+      return await this.concatData(User, -1);
     }
     catch (e)
     {
@@ -377,6 +414,7 @@ export class UsersService {
   {
     let users = {};
 
+    console.log(usersArray);
     if(type == 4)
     {
       usersArray.forEach(userSociety => {
@@ -389,6 +427,15 @@ export class UsersService {
     }
     switch(type)
     {
+      case -1:
+        users[0] = {
+          idUser: usersArray.id,
+          name: usersArray.firstName + '_' + usersArray.lastName,
+          email: usersArray.email,
+          phone: usersArray.phone,
+        }
+        break;
+
       case 1:
         usersArray.forEach(user => {
           users[user.id] = {

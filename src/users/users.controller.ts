@@ -17,7 +17,7 @@ import { CreateUserBillingDto } from "./dto/create-user-billing.dto";
 import { UpdateUserAddressDto } from "./dto/update-user-address.dto";
 import { UpdateUserBillingDto } from "./dto/update-user-billing.dto";
 import { RolesGuard } from "../roles/guards/roles.guard";
-import { AccountScopeGuard } from "../roles/guards/account-scope.guard";
+import { ComposeUserAuthGuard } from "../roles/guards/compose-user-auth.guard";
 
 @Controller('users')
 export class UsersController {
@@ -60,15 +60,21 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS, process.env.USER_RIGHTS]))
+  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS, process.env.USER_RIGHTS, process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS]))
   @Get(':id/address')
   findAllAddress(@Param('id') id: string) {
     return this.usersService.findAllAddress(+id);
   }
 
+  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS, process.env.USER_RIGHTS, process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS]))
+  @Get(':id/role')
+  findRole(@Param('id') id: string) {
+    return this.usersService.findRole(+id);
+  }
 
 
-  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS]) || new AccountScopeGuard([process.env.USER_RIGHTS]))
+
+  @UseGuards(new ComposeUserAuthGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS], [process.env.USER_RIGHTS, process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS], []))
   @Get(':id/billing')
   findAllBilling(@Param('id') id: string) {
     return this.usersService.findAllBilling(+id);
@@ -84,13 +90,13 @@ export class UsersController {
     return this.usersService.findAllLinkSocietiesSociety(+id);
   }
 
-  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS]) || new AccountScopeGuard([process.env.USER_RIGHTS]))
+  @UseGuards(new ComposeUserAuthGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS], [process.env.USER_RIGHTS, process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS], []))
   @Get('readByID/:id')
   findOneById(@Param('id') id: string) {
     return this.usersService.findOneById(+id);
   }
 
-  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS]) || new AccountScopeGuard([process.env.USER_RIGHTS]))
+  @UseGuards(new ComposeUserAuthGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS], [process.env.USER_RIGHTS, process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS], []))
   @Get('readByEmail/:email')
   findOneByEmail(@Param('email') email: string) {
     return this.usersService.findOneByEmail(email);
@@ -100,25 +106,25 @@ export class UsersController {
   // ################# UPDATE ROUTE PART #################
 
 
-  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS]) || new AccountScopeGuard ([process.env.USER_RIGHTS]))
+  @UseGuards(new ComposeUserAuthGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS], [process.env.USER_RIGHTS, process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS], []))
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
   }
 
-  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS]) || new AccountScopeGuard ([process.env.USER_RIGHTS]))
+  @UseGuards(new ComposeUserAuthGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS], [process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS], [process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS]))
   @Patch(':id/society')
   updateLinkSociety(@Param('id') id: string, @Body() updateUserSocietiesDto: UpdateUserSocietiesDto) {
     return this.usersService.updateLinkSociety(+id, updateUserSocietiesDto);
   }
 
-  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS]) || new AccountScopeGuard ([process.env.USER_RIGHTS]))
+  @UseGuards(new ComposeUserAuthGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS], [process.env.USER_RIGHTS, process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS], []))
   @Patch(':id/address')
   updateAddress(@Param('id') id: string, @Body() updateUserAddressDto: UpdateUserAddressDto) {
     return this.usersService.updateAddress(+id, updateUserAddressDto);
   }
 
-  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS]) || new AccountScopeGuard ([process.env.USER_RIGHTS]))
+  @UseGuards(new ComposeUserAuthGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS], [process.env.USER_RIGHTS, process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS], []))
   @Patch(':id/billing')
   updateBilling(@Param('id') id: string, @Body() updateUserBillingDto: UpdateUserBillingDto) {
     return this.usersService.updateBilling(+id, updateUserBillingDto);
@@ -127,7 +133,7 @@ export class UsersController {
 
   // ################# REMOVE ROUTE PART #################
 
-  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS]) || new AccountScopeGuard ([process.env.USER_RIGHTS]))
+  @UseGuards(new ComposeUserAuthGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS], [process.env.USER_RIGHTS, process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS], []))
   @Patch(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
@@ -136,25 +142,25 @@ export class UsersController {
 
   // ################# DELETE ROUTE PART #################
 
-  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS]) || new AccountScopeGuard ([process.env.USER_RIGHTS]))
+  @UseGuards(new ComposeUserAuthGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS], [process.env.USER_RIGHTS, process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS], []))
   @Delete(':id')
   delete(@Param('id') id: string) {
     return this.usersService.delete(+id);
   }
 
-  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS]) || new AccountScopeGuard ([process.env.USER_RIGHTS]))
+  @UseGuards(new ComposeUserAuthGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS], [process.env.USER_RIGHTS, process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS], []))
   @Delete(':id/society')
   deleteLinkSociety(@Param('id') id: string) {
     return this.usersService.deleteLinkSociety(+id);
   }
 
-  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS]) || new AccountScopeGuard ([process.env.USER_RIGHTS]))
+  @UseGuards(new ComposeUserAuthGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS], [process.env.USER_RIGHTS, process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS], []))
   @Delete(':id/address')
   deleteAddress(@Param('id') id: string) {
     return this.usersService.deleteAddress(+id);
   }
 
-  @UseGuards(new RolesGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS]) || new AccountScopeGuard ([process.env.USER_RIGHTS]))
+  @UseGuards(new ComposeUserAuthGuard([process.env.SUPERADMIN_RIGHTS, process.env.ADMIN_RIGHTS], [process.env.USER_RIGHTS, process.env.RESTAURANT_RIGHTS, process.env.DELIVER_RIGHTS], []))
   @Delete(':id/billing')
   deleteBilling(@Param('id') id: string) {
     return this.usersService.deleteBilling(+id);
