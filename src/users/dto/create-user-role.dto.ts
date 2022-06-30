@@ -3,6 +3,7 @@ import {
   IsString,
 } from 'class-validator';
 import { CreateUserDto } from "./create-user.dto";
+import {ApiProperty} from "@nestjs/swagger";
 
 export class CreateUserRoleDto extends CreateUserDto{
 
@@ -18,6 +19,7 @@ export class CreateUserRoleDto extends CreateUserDto{
   }
   @IsOptional()
   @IsString()
+  @ApiProperty()
   roles: string;
 }
 
