@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  postgres:
+    restart: always
+    image: postgres:13
+    ports:
+      - "5434:5432"
+    env_file:
+      - ./environments/postgres.env
+    networks:
+      - open-food
+    volumes:
+      - /db/postgres:/var/lib/postgresql/data
+
+  mongodb_migrate:
+    image: mongo:4
+    restart: always
+    env_file:
+      - ./environments/mongo.env
+    ports:
+      - '27017:27017'
+    networks:
+      - open-food
+    volumes:
+      - /db/mongodb:/data/db
+
+  # Replica Set (required for Prisma Client)
+  mongo:
+    build: ./mongodb_replica
+    env_file:
+      - ./environments/mongo.env
+    environment:
+      MONGO_REPLICA_HOST: host.docker.internal
+      MONGO_REPLICA_PORT: 27018
+    ports:
+      - '27018:27018'
+    networks:
+      - open-food
+    volumes:
+      - /db/mongodb_replica:/data/db
+
+networks:
+  open-food:

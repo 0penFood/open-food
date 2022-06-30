@@ -2,11 +2,6 @@
   <img src="https://cdn.discordapp.com/attachments/978281834507026462/978288965146804234/Open.png" width="350" alt="OpenFood Logo" />
 </p>
 
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=0penFood_open-food&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=0penFood_open-food)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=0penFood_open-food&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=0penFood_open-food)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=0penFood_open-food&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=0penFood_open-food)
-
-
 ## Description
 
 [OpenFood](http://www.open-food.fr/) is an open source app, developed in TypeScript with NestJS. The Goal of this app is to provide an open source alternative to applications like UberEats, Deliveroo, Foodora, etc.

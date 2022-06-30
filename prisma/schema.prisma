@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users{
+    id              Int         @id                     @default(autoincrement())
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
+
+    firstName       String
+    lastName        String
+    email           String      @unique
+    password        String?
+    fidelityPts     Float       @default(0)
+    accountType     Int         @default(1)
+    phone           String?     @unique
+    coordonate      String?
+
+    ssoGoogle      Boolean     @default(false)
+    ssoFacebook    Boolean     @default(false)
+    ssoGitHub      Boolean     @default(false)
+    lastLogin      DateTime?
+
+    roles           String      @default("001")
+    isValid         Boolean     @default(true)
+
+    userSociety    UserHasSociety[]
+    adress         UserHasAdress[]
+    billing        UserHasBilling[]
+}
+
+model UserHasSociety{
+    id              Int             @id                     @default(autoincrement())
+
+    users           Users           @relation(fields: [fk_user], references: [id])
+    fk_user         Int
+    society         Societies       @relation(fields: [fk_society], references: [id])
+    fk_society      Int
+
+    isValid         Boolean     @default(true)
+}
+
+model UserHasAdress{
+    id              Int         @id                     @default(autoincrement())
+
+
+    users           Users       @relation(fields: [fk_user], references: [id])
+    fk_user         Int
+    address         String
+
+    isValid         Boolean     @default(true)
+}
+
+model UserHasBilling{
+    id              Int         @id                     @default(autoincrement())
+
+    users           Users       @relation(fields:[fk_user], references:[id])
+    fk_user         Int
+    billing         String
+
+
+    isValid         Boolean     @default(true)
+}
+
+model Societies{
+    id              Int         @id                     @default(autoincrement())
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
+
+    societyAuth    String
+    area            String?
+    societyName     String
+    sepa            String
+    idRestaurant    String?
+
+
+    isValid         Boolean     @default(true)
+
+    societyUsers    UserHasSociety[]
+}
